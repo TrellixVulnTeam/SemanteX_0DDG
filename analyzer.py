@@ -3,6 +3,12 @@ import spacy
 import random
 from spacy.util import minibatch, compounding
 
+def test_model(TEXT):
+    # Load saved trained model
+    loaded_model = spacy.load("model_artifacts")
+    # Generate prediction
+    parsed_text = loaded_model(TEXT)
+
 TEXT = """
  Your cart empty.
 Sorry, is insufficient stock cart.
@@ -26,6 +32,7 @@ def test_model(input_data: str = TEXT):
         prediction = "Negative"
         score = parsed_text.cats["neg"]
     print(
+        f"Review text: {TEXT}\nPredicted sentiment: {prediction}"
         f"Review text: {input_data}\nPredicted sentiment: {prediction}"
         f"\nScore: {score}"
     )
@@ -141,33 +148,11 @@ def load_training_data(
     return reviews[:split], reviews[split:]
 
 
-def get_vector(filtered_tokens):
-    filtered_tokens = filtered_tokens[0].vector
-    return filtered_tokens
-
-
-def lemmanization(filtered_tokens):
-    lemmas = [
-        f"Token: {token} = lemma: {token.lemma_}"
-        for token in filtered_tokens
-    ]
-    return lemmas
-
-
-def remove_stopwords(tokens):
-    filtered_tokens = [token for token in tokens if not token.is_stop]
-    return filtered_tokens
-
-
-def tokenizer_text(text):
-    nlp = spacy.load("en_core_web_sm")
-    doc = nlp(text)
-    token_list = [token for token in doc]
-    return token_list
-
-
 if __name__ == "__main__":
-    train, test = load_training_data(limit=2000)
+    train, test = load_training_data(limit=25)
     train_model(train, test)
     print("Testing model")
-    test_model()
+    f = open('tweets.txt', 'r')
+    for line in f:
+        TEXT = line
+        test_model(TEXT)
