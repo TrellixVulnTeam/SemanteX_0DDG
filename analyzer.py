@@ -1,29 +1,15 @@
 import os
 import spacy
 import random
+import tarfile
 from spacy.util import minibatch, compounding
 
-def test_model(TEXT):
+
+def test_model(text):
     # Load saved trained model
     loaded_model = spacy.load("model_artifacts")
     # Generate prediction
-    parsed_text = loaded_model(TEXT)
-
-TEXT = """
- Your cart empty.
-Sorry, is insufficient stock cart.
-Without product, applied coupon promotion code cannot redeemed.Are sure remove product?
-Tick box proceed Samsung.com.
-Samsung.com Services marketing information, new product service announcements well special offers, events newsletters.
-Help us make recommendations updating product preferences.
-"""
-
-
-def test_model(input_data: str = TEXT):
-    # Load saved trained model
-    loaded_model = spacy.load("model_artifacts")
-    # Generate prediction
-    parsed_text = loaded_model(input_data)
+    parsed_text = loaded_model(text)
     # Determine prediction to return
     if parsed_text.cats["pos"] > parsed_text.cats["neg"]:
         prediction = "Positive"
@@ -32,9 +18,9 @@ def test_model(input_data: str = TEXT):
         prediction = "Negative"
         score = parsed_text.cats["neg"]
     print(
-        f"Review text: {TEXT}\nPredicted sentiment: {prediction}"
-        f"Review text: {input_data}\nPredicted sentiment: {prediction}"
-        f"\nScore: {score}"
+        f"Review text: {text}\n"
+        f"Predicted sentiment: {prediction}\n"
+        f"Score: {score}\n"
     )
 
 
@@ -69,13 +55,11 @@ def evaluate_model(tokenizer, textcat, test_data: list) -> dict:
     return {"precision": precision, "recall": recall, "f-score": f_score}
 
 
-def train_model(training_data: list, test_data: list, iterations: int = 20):
+def train_model(training_data: list, test_data: list, iterations: int = 10):
     # Build pipeline
     nlp = spacy.load("en_core_web_sm")
     if "textcat" not in nlp.pipe_names:
-        textcat = nlp.create_pipe(
-            "textcat", config={"architecture": "simple_cnn"}
-        )
+        textcat = nlp.create_pipe("textcat", config={"architecture": "simple_cnn"})
         nlp.add_pipe(textcat, last=True)
     else:
         textcat = nlp.get_pipe("textcat")
@@ -88,9 +72,7 @@ def train_model(training_data: list, test_data: list, iterations: int = 20):
         # Training loop
         print("Beginning training")
         print("{:>20}{:>20}{:>20}{:>20}".format('Loss', 'Precision', 'Recall', 'F-score'))
-        batch_sizes = compounding(
-            4.0, 32.0, 1.001
-        )  # A generator that yields infinite series of input numbers
+        batch_sizes = compounding(4.0, 32.0, 1.001)  # A generator that yields infinite series of input numbers
         for i in range(iterations):
             loss = {}
             random.shuffle(training_data)
@@ -120,10 +102,9 @@ def train_model(training_data: list, test_data: list, iterations: int = 20):
 
 
 def load_training_data(
-    data_directory: str = "train",
+    data_directory: str = "aclImdb/train",
     split: float = 0.8,
-    limit: int = 0
-) -> tuple:
+    limit: int = 0) -> tuple:
     # Load from files
     reviews = []
     for label in ["pos", "neg"]:
@@ -149,10 +130,16 @@ def load_training_data(
 
 
 if __name__ == "__main__":
-    train, test = load_training_data(limit=25)
-    train_model(train, test)
+    os.chdir(os.path.relpath('/Users/dankevich.te/Downloads/'))
+    fname = 'aclImdb_v1.tar.gz'
+    with tarfile.open(fname, "r:gz") as tar:
+        tar.extractall()
+        tar.close()
+    # train, test = load_training_data(limit=5000)
+    # train_model(train, test)
     print("Testing model")
-    f = open('tweets.txt', 'r')
-    for line in f:
-        TEXT = line
-        test_model(TEXT)
+    test_model("I would buy a new iphone")
+    # f = open('tweets.txt', 'r')
+    # for line in f:
+    #     TEXT = line
+    #     test_model(TEXT)
