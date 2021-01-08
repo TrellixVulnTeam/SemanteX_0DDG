@@ -55,7 +55,7 @@ def evaluate_model(tokenizer, textcat, test_data: list) -> dict:
     return {"precision": precision, "recall": recall, "f-score": f_score}
 
 
-def train_model(training_data: list, test_data: list, iterations: int = 10):
+def train_model(training_data: list, test_data: list, iterations: int = 100):
     # Build pipeline
     nlp = spacy.load("en_core_web_sm")
     if "textcat" not in nlp.pipe_names:
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     with tarfile.open(fname, "r:gz") as tar:
         tar.extractall()
         tar.close()
-    # train, test = load_training_data(limit=5000)
+    # train, test = load_training_data(limit=10000)
     # train_model(train, test)
     print("Testing model")
     test_model("I would buy a new iphone")

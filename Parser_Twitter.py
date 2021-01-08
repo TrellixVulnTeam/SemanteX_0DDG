@@ -1,3 +1,4 @@
+import time
 import tweepy
 import pandas as pd
 from tweepy import OAuthHandler
@@ -32,6 +33,13 @@ def search_tweets(api, search, numTweets):
 
 
 if __name__ == "__main__":
+    # while True:
+    #     try:
     auth = initialize_twitter()
     api = tweepy.API(auth)
-    search_tweets(api, ['Iphone 12 Max Pro'], 100)
+    search_tweets(api, ['Iphone 12 Max Pro'], 500)
+        # except tweepy.TweepError:
+        #     time.sleep(60)
+        #     continue
+        # except StopIteration:
+        #     break

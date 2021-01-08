@@ -1,5 +1,5 @@
 #Twitter API credentials
-consumer_key = "EzmVO4QV00W3UPIfrQT2Df13P"
-consumer_secret = "FrpPUPJs6lWaUvrJf6xLikuvb5aV8FZYCNfBzLyFMqhTjmSCyj"
-access_token = "1336413311781531648-uOBk6I0VwUfnfpaWymAOetvInidija"
-access_secret_token = "EcUUhSZzouvWothWKTce2KVmMqyFk7rbZuEPa0bMTvQIc"
+consumer_key = "PerfBC5n2w646Dao3JnvzfJDb"
+consumer_secret = "C7Lb767EZjC67oNDdU0NTOfdeBeqyXUgsOqJyHcwtbcRaltkXH"
+access_token = "1336413311781531648-ECho6PWnYbX6TWsEmZle1B3WAl1Dsg"
+access_secret_token = "GVpZnrClubNp0f2RMVMunByIn1dokHjcwNwkmdM4N1FGQ"
