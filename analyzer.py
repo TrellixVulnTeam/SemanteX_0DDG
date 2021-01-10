@@ -3,13 +3,21 @@ import spacy
 import random
 import tarfile
 from spacy.util import minibatch, compounding
+import pandas as pd
+import openpyxl as pxl
+import Preprocessing as pr
 
 
 def test_model(text):
     # Load saved trained model
     loaded_model = spacy.load("model_artifacts")
     # Generate prediction
-    parsed_text = loaded_model(text)
+    tokens = pr.tokenizer_text(text)
+    tokens = pr.remove_stopwords(tokens)
+    res = ""
+    for token in tokens:
+        res += str(token) + " "
+    parsed_text = loaded_model(res)
     # Determine prediction to return
     if parsed_text.cats["pos"] > parsed_text.cats["neg"]:
         prediction = "Positive"
@@ -17,11 +25,7 @@ def test_model(text):
     else:
         prediction = "Negative"
         score = parsed_text.cats["neg"]
-    print(
-        f"Review text: {text}\n"
-        f"Predicted sentiment: {prediction}\n"
-        f"Score: {score}\n"
-    )
+    return prediction, score
 
 
 def evaluate_model(tokenizer, textcat, test_data: list) -> dict:
@@ -55,7 +59,7 @@ def evaluate_model(tokenizer, textcat, test_data: list) -> dict:
     return {"precision": precision, "recall": recall, "f-score": f_score}
 
 
-def train_model(training_data: list, test_data: list, iterations: int = 100):
+def train_model(training_data: list, test_data: list, iterations: int = 20):
     # Build pipeline
     nlp = spacy.load("en_core_web_sm")
     if "textcat" not in nlp.pipe_names:
@@ -129,17 +133,73 @@ def load_training_data(
     return reviews[:split], reviews[split:]
 
 
-if __name__ == "__main__":
+def start_education():
+    train, test = load_training_data(limit=2500)
+    train_model(train, test)
+
+
+def get_data_for_education():
     os.chdir(os.path.relpath('/Users/dankevich.te/Downloads/'))
     fname = 'aclImdb_v1.tar.gz'
     with tarfile.open(fname, "r:gz") as tar:
         tar.extractall()
         tar.close()
-    # train, test = load_training_data(limit=10000)
-    # train_model(train, test)
-    print("Testing model")
-    test_model("I would buy a new iphone")
-    # f = open('tweets.txt', 'r')
-    # for line in f:
-    #     TEXT = line
-    #     test_model(TEXT)
+
+
+def show_result(text):
+    prediction, score = test_model(text)
+    return prediction, score
+
+
+def get_result_list(path):
+    pos = 0
+    neg = 0
+    sheets = pd.ExcelFile(path)
+    for sheet in sheets.sheet_names:
+        result = []
+        table = pd.read_excel(path, sheet_name=sheet)
+        data = pd.DataFrame(table)
+        for text in data['Text']:
+            prediction, score = show_result(text)
+            res = {
+                "text": text,
+                "Prediction": prediction,
+                "Score": score
+            }
+            if prediction == "Positive":
+                pos += 1
+            else:
+                neg += 1
+            result.append(res)
+        write_result(path, result, sheet)
+    statistics(pos, neg)
+
+
+def write_result(path, list, sheet_name):
+    writer = pd.ExcelWriter(path, engine='openpyxl')
+    book = pxl.load_workbook(path)
+    writer.book = book
+    text_sheet = pd.DataFrame(list)
+    text_sheet.to_excel(writer, sheet_name=sheet_name + ' result')
+    writer.save()
+    writer.close()
+
+
+def analyze_data_with_education(path):
+    print("Testing model with education.")
+    get_data_for_education()
+    start_education()
+    get_result_list(path)
+
+
+def analyze_data_without_education(path):
+    print("Testing model without education.")
+    get_data_for_education()
+    get_result_list(path)
+
+
+def statistics(positive, negative):
+    total = positive + negative
+    pos_est = (positive / total) * 100
+    neg_est = (negative / total) * 100
+    print("Total: {}\nNumber of positive: {}\nNumber of negative: {}\nPositive: {:.2f}\nNegative: {:.2f}".format(total, positive, negative, pos_est, neg_est))

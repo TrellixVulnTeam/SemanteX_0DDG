@@ -1,4 +1,3 @@
-import time
 import tweepy
 import pandas as pd
 from tweepy import OAuthHandler
@@ -22,24 +21,22 @@ def search_tweets(api, search, numTweets):
         tweet = {
             'ID': tweet.id,
             'User': tweet.user.screen_name,
-            'Tweet': tweet.text,
+            'Text': tweet.text,
             'Date': tweet.created_at,
             'Location': tweet.user.location.encode('UTF8'),
             'Device': tweet.source
         }
         tweet_list.append(tweet)
-    tweet_df = pd.DataFrame(tweet_list)
+    return tweet_list
+
+
+def create_excel(list):
+    tweet_df = pd.DataFrame(list)
     tweet_df.to_excel('dataset.xlsx', sheet_name='Twitter')
 
 
-if __name__ == "__main__":
-    # while True:
-    #     try:
+def get_data_from_Twitter(query, number_of_texts):
     auth = initialize_twitter()
     api = tweepy.API(auth)
-    search_tweets(api, ['Iphone 12 Max Pro'], 500)
-        # except tweepy.TweepError:
-        #     time.sleep(60)
-        #     continue
-        # except StopIteration:
-        #     break
+    list = search_tweets(api, query, number_of_texts)
+    create_excel(list)

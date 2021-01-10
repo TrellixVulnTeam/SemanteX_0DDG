@@ -1,6 +1,7 @@
 import os
 import requests
-import analyzer
+import pandas as pd
+import openpyxl as pxl
 from bs4 import BeautifulSoup as soup
 from nltk.corpus import stopwords
 from googlesearch import search
@@ -62,17 +63,37 @@ def get_title(URL):
 def search_info(query, start, stop, pause):
     index = 0
     references = [None for i in range(stop)]
-    for web_site in search(query, tld="com", num=start, stop=stop, pause=pause):
+    for web_site in search(query, tld="com", lang='en', start=start, stop=stop, pause=pause):
         references[index] = web_site
         index += 1
     return references
 
 
-if __name__ == '__main__':
-    links = search_info("Samsung Galaxy Note 10", 10, 4, 30)
+def get_text_list(links):
+    result = []
     for link in links:
-        print(link)
-        # article = get_article(link)
-        # clean_text = remove_stopwords(article)
-        # analyzer.TEXT = clean_text
-        # create_file(clean_text)
+        article = get_article(link)
+        clean_text = remove_stopwords(article)
+        text = {
+            "Link": link,
+            "Text": clean_text
+        }
+        result.append(text)
+    return result
+
+
+def write_to_file(list):
+    writer = pd.ExcelWriter('dataset.xlsx', engine='openpyxl')
+    if os.path.exists('dataset.xlsx'):
+        book = pxl.load_workbook('dataset.xlsx')
+        writer.book = book
+    text_sheet = pd.DataFrame(list)
+    text_sheet.to_excel(writer, sheet_name='Web')
+    writer.save()
+    writer.close()
+
+
+def get_data_from_Web(query, number):
+    links = search_info(query, 10, number, 15)
+    text_list = get_text_list(links)
+    write_to_file(text_list)
