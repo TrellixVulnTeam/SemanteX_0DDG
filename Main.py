@@ -10,9 +10,6 @@ import Analyzer
     4) pip install googlesearch
     5) pip install nltk
     6) pip install spacy
-"""
-
-"""
     The program must search for data about specify product represented as tweets or texts from Google.
     These tweets and texts are extracted and to put in an excel file named "dataset.xlsx".
     After that, Analyzer class will find the file "dataset.xlsx" and make an analyze each tweet and text.
