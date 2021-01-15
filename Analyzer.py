@@ -134,12 +134,12 @@ def load_training_data(
 
 
 def start_education():
-    train, test = load_training_data(limit=2500)
+    train, test = load_training_data(limit=1000)
     train_model(train, test)
 
 
 def get_data_for_education():
-    os.chdir(os.path.relpath('/Users/dankevich.te/Downloads/'))
+    os.chdir(os.path.curdir)
     fname = 'aclImdb_v1.tar.gz'
     with tarfile.open(fname, "r:gz") as tar:
         tar.extractall()
@@ -185,16 +185,10 @@ def write_result(path, list, sheet_name):
     writer.close()
 
 
-def analyze_data_with_education(path):
-    print("Testing model with education.")
-    get_data_for_education()
+def analyze_data(path):
+    print("Testing model.")
+    # get_data_for_education()
     start_education()
-    get_result_list(path)
-
-
-def analyze_data_without_education(path):
-    print("Testing model without education.")
-    get_data_for_education()
     get_result_list(path)
 
 

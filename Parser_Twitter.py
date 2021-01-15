@@ -15,7 +15,8 @@ def initialize_twitter():
 
 
 def search_tweets(api, search, numTweets):
-    tweets = tweepy.Cursor(api.search, q=search, lang="en").items(numTweets)
+    places = api.geo_search(query=search, granularity="country")
+    tweets = tweepy.Cursor(api.search, places, lang="English").items(numTweets)
     tweet_list = []
     for tweet in tweets:
         tweet = {
