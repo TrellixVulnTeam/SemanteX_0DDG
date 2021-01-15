@@ -1,7 +1,6 @@
 import os
 import spacy
 import random
-import tarfile
 from spacy.util import minibatch, compounding
 import pandas as pd
 import openpyxl as pxl
@@ -138,12 +137,12 @@ def start_education():
     train_model(train, test)
 
 
-def get_data_for_education():
-    os.chdir(os.path.curdir)
-    fname = 'aclImdb_v1.tar.gz'
-    with tarfile.open(fname, "r:gz") as tar:
-        tar.extractall()
-        tar.close()
+# def get_data_for_education():
+#     os.chdir(os.path.curdir)
+#     fname = 'aclImdb_v1.tar.gz'
+#     with tarfile.open(fname, "r:gz") as tar:
+#         tar.extractall()
+#         tar.close()
 
 
 def show_result(text):
