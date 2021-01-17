@@ -4,12 +4,14 @@ import Analyzer
 
 """
     it is necessary to install the following library:
-    1) pip install pandas
-    2) pip install openpyxl
-    3) pip install bs4
-    4) pip install googlesearch
-    5) pip install nltk
-    6) pip install spacy
+    1) pip3 install pandas
+    2) pip3 install openpyxl
+    3) pip3 install bs4
+    4) pip3 install googlesearch
+    5) pip3 install nltk
+    6) pip3 install spacy
+    7) pip3 install tweepy
+    8) python3 -m spacy download en
     The program must search for data about specify product represented as tweets or texts from Google.
     These tweets and texts are extracted and to put in an excel file named "dataset.xlsx".
     After that, Analyzer class will find the file "dataset.xlsx" and make an analyze each tweet and text.

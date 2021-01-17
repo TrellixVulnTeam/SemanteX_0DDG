@@ -63,10 +63,10 @@ def get_title(URL):
     return page_soup.h1.text
 
 
-def search_info(query, start, stop, pause):
+def search_info(query, stop):
     index = 0
     references = [None for i in range(stop)]
-    for web_site in search(query, tld="com", lang='en', start=start, stop=stop, pause=pause):
+    for web_site in search(query, stop, lang='en'):
         references[index] = web_site
         index += 1
     return references
@@ -87,9 +87,6 @@ def get_text_list(links):
 
 def write_to_file(list):
     writer = pd.ExcelWriter('dataset.xlsx', engine='openpyxl')
-    if os.path.exists('dataset.xlsx'):
-        book = pxl.load_workbook('dataset.xlsx')
-        writer.book = book
     text_sheet = pd.DataFrame(list)
     text_sheet.to_excel(writer, sheet_name='Web')
     writer.save()
@@ -97,6 +94,6 @@ def write_to_file(list):
 
 
 def get_data_from_Web(query, number):
-    links = search_info(query, 10, number, 15)
+    links = search_info(query, number)
     text_list = get_text_list(links)
     write_to_file(text_list)

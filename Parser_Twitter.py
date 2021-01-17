@@ -1,6 +1,7 @@
 import tweepy
 import pandas as pd
 from tweepy import OAuthHandler
+import xlsxwriter
 import API
 
 
@@ -33,7 +34,7 @@ def search_tweets(api, search, numTweets):
 
 def create_excel(list):
     tweet_df = pd.DataFrame(list)
-    tweet_df.to_excel('dataset.xlsx', sheet_name='Twitter')
+    tweet_df.to_excel('dataset.xlsx', sheet_name='Twitter', engine='xlsxwriter')
 
 
 def get_data_from_Twitter(query, number_of_texts):

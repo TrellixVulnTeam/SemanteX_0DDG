@@ -58,7 +58,7 @@ def evaluate_model(tokenizer, textcat, test_data: list) -> dict:
     return {"precision": precision, "recall": recall, "f-score": f_score}
 
 
-def train_model(training_data: list, test_data: list, iterations: int = 20):
+def train_model(training_data: list, test_data: list, iterations: int = 10):
     # Build pipeline
     nlp = spacy.load("en_core_web_sm")
     if "textcat" not in nlp.pipe_names:
@@ -176,8 +176,6 @@ def get_result_list(path):
 
 def write_result(path, list, sheet_name):
     writer = pd.ExcelWriter(path, engine='openpyxl')
-    book = pxl.load_workbook(path)
-    writer.book = book
     text_sheet = pd.DataFrame(list)
     text_sheet.to_excel(writer, sheet_name=sheet_name + ' result')
     writer.save()
